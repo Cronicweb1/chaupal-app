@@ -14,20 +14,35 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Restore Flutter source from archive
+        working-directory: .
+        run: |
+          rm -rf app /tmp/chaupal_source
+          mkdir -p /tmp/chaupal_source
+          unzip -q "Flutter source.zip" -d /tmp/chaupal_source
+          test -f /tmp/chaupal_source/chaupal_flutter/pubspec.yaml
+          mv /tmp/chaupal_source/chaupal_flutter app
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: 3.35.2
           channel: stable
           cache: true
+
       - name: Generate Android platform
         run: flutter create . --platforms=android --project-name chaupal
+
       - name: Get dependencies
         run: flutter pub get
+
       - name: Build release APK
         run: flutter build apk --release --build-name=1.0.0 --build-number=${{ github.run_number }}
+
       - name: Rename APK
         run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/chaupal-preview.apk
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
