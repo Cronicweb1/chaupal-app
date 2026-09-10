@@ -24,6 +24,10 @@ jobs:
           test -f /tmp/chaupal_source/chaupal_flutter/pubspec.yaml
           mv /tmp/chaupal_source/chaupal_flutter app
 
+      - name: Apply source compatibility fixes
+        working-directory: .
+        run: python3 .github/scripts/fix_flutter_source.py
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
